@@ -1,0 +1,14 @@
+{# 硬核黑白风 —— 直角、强边框、黑白分明 #}
+{% extends "base.html" %}
+{% block style %}
+:root{
+  --bg:#ffffff;--card:#ffffff;--text:#000000;--muted:#555555;
+  --line:#dddddd;--accent:#000000;--tag:#f4f4f4;--proj-bg:#ffffff;
+}
+.page{gap:14px;}
+.card{border-radius:0;border:1px solid #000;box-shadow:none;}
+.proj{border-radius:0;border:1px solid #000;}
+.skills span{border-radius:0;border:1px solid #000;}
+.hero .pitch{border-top:2px solid #000;}
+.sec-title::before{background:#000;}
+{% endblock %}

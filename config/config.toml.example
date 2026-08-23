@@ -1,0 +1,33 @@
+# ResumeCraft 服务配置模板
+# 复制为 config.toml 并按需修改。真实密码/密钥请勿提交到 git。
+
+# 后端服务配置
+[server]
+host = "0.0.0.0"
+port = 5015
+# ⚠️ 生产环境请改为强随机字符串
+secret_key = "CHANGE_ME_TO_RANDOM_SECRET"
+session_ttl_hours = 72
+
+# 账号权限配置
+[auth]
+enabled = true
+username = "admin"
+# ⚠️ 生产环境请改为强密码
+password = "change-me"
+
+# PDF 导出配置
+[pdf]
+engine = "playwright"
+page_size = "A4"
+margin = 10
+print_background = true
+
+# 模板配置
+[template]
+# 默认模板名称，对应 backend/templates/{name}.html
+default = "minimal"
+
+# 上传限制（MB）
+[upload]
+max_size_mb = 10

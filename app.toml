@@ -1,0 +1,13 @@
+name = "ResumeCraft"
+version = "0.1.0"
+deploy_type = "python-git"
+supervisor_service = "ResumeCraft"
+deploy_user = "a1"
+
+[python_git]
+  manifest_file = "file_manifest.json"
+
+[deploy]
+  command = "./venv/bin/python app.py"
+  user = "a1"
+  log_file = "./logs/ResumeCraft.log"

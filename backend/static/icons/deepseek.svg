@@ -1,0 +1,13 @@
+<!-- DeepSeek 官方极客蓝蓝鲸/波浪矢量图标 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="16" height="16" fill="none">
+  <defs>
+    <linearGradient id="ds-blue-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4D6BFE"/>
+      <stop offset="100%" stop-color="#0D42FF"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#ds-blue-grad)"/>
+  <!-- 蓝鲸鳍翼/浪花线条 -->
+  <path d="M14 26 C14 18 20 14 28 14 C33 14 36 17 36 21 C36 27 28 32 18 34 C24 31 30 28 30 23 C30 19 26 17 22 18 C18 19 15 22 14 26 Z" fill="#ffffff"/>
+  <circle cx="21" cy="21" r="1.8" fill="url(#ds-blue-grad)"/>
+</svg>

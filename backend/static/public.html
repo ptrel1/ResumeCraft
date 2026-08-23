@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>简历展示 | RCS 调度 / AI Agent / 运维</title>
+<link rel="icon" type="image/svg+xml" href="/static/logo.svg?v=0.1.4">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg:#0d1117;--card:#151a22;--line:#30363d;--text:#e6edf3;--muted:#8b949e;
+    --green:#3fb950;--blue:#58a6ff;--purple:#bc8cff;
+  }
+  body{
+    font-family:-apple-system,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:32px 20px 60px;}
+
+  /* 顶部名片区 */
+  .hero-name{font-size:34px;font-weight:800;letter-spacing:.5px;}
+  .hero-name b{color:var(--green);}
+  .hero-role{font-size:16px;color:var(--blue);font-weight:600;margin-top:6px;}
+  .hero-pitch{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:14px;}
+  .contact-flow{margin-top:16px;display:flex;flex-wrap:wrap;gap:10px 24px;font-size:13px;color:var(--muted);}
+  .contact-flow span{display:inline-flex;align-items:center;gap:6px;}
+  .contact-flow b{color:var(--text);font-weight:600;}
+
+  /* 统计横幅 */
+  .stats-bar{
+    margin-top:28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;
+  }
+  .stat-card{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;transition:transform .15s;
+  }
+  .stat-card:hover{transform:translateY(-3px);border-color:var(--green);}
+  .stat-num{font-size:22px;font-weight:800;color:var(--green);}
+  .stat-label{font-size:12px;color:var(--muted);margin-top:2px;}
+
+  /* 分区标题 */
+  .sec-title{
+    display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;
+    letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin:40px 0 16px;
+  }
+  .sec-title::before{content:"";width:20px;height:2px;background:var(--green);}
+  .sec-title::after{content:"";flex:1;height:1px;background:var(--line);}
+
+  /* 简历 iframe (高保真纸张) */
+  .paper{background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.5);}
+  .paper iframe{width:100%;min-height:297mm;border:none;display:block;}
+
+  /* 技能标签 */
+  .skill-grid{display:flex;flex-wrap:wrap;gap:10px;}
+  .skill-tag{
+    background:var(--card);border:1px solid var(--line);color:var(--muted);
+    padding:6px 14px;border-radius:999px;font-size:13px;
+  }
+  .skill-tag:hover{border-color:var(--green);color:var(--text);}
+
+  /* 分享按钮 */
+  .share-bar{margin-top:30px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+  .share-btn{
+    background:var(--card);border:1px solid var(--line);color:var(--text);
+    padding:8px 18px;border-radius:8px;font-size:13px;cursor:pointer;transition:all .15s;text-decoration:none;
+  }
+  .share-btn:hover{border-color:var(--green);}
+  .share-btn.primary{background:var(--green);color:#0f1117;border:none;font-weight:700;}
+
+  .footer{margin-top:40px;text-align:center;color:var(--muted);font-size:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 名片区：由 /api/public/data 动态填充 -->
+  <div id="profileHero">
+    <div class="hero-name">张三</div>
+    <div class="hero-role">技术运维 / 实施工程师</div>
+    <div class="hero-pitch">多年数字产品与工程实践经验，擅长从用户需求与数据出发解决问题，能独立完成从方案设计到落地交付的全流程。</div>
+    <div class="contact-flow">
+      <span>📧 <b>example@example.com</b></span>
+      <span>🐙 <b>github.com/your-github-username</b></span>
+      <span>📍 <b>浙江·杭州</b></span>
+    </div>
+  </div>
+
+  <!-- 硬核数据统计 -->
+  <div class="stats-bar">
+    <div class="stat-card"><div class="stat-num" id="gitStat">--</div><div class="stat-label">真实 Git 提交</div></div>
+    <div class="stat-card"><div class="stat-num" id="tokenStat">--</div><div class="stat-label">LLM Token 治理</div></div>
+    <div class="stat-card"><div class="stat-num" id="blockStat">--</div><div class="stat-label">恶意扫描拦截</div></div>
+    <div class="stat-card"><div class="stat-num" id="projStat">5+</div><div class="stat-label">核心开源项目</div></div>
+  </div>
+
+  <div class="sec-title">📄 我的高保真简历</div>
+  <div class="paper"><iframe id="frame" sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe></div>
+
+  <div class="sec-title">💎 技术栈</div>
+  <div class="skill-grid">
+    <span class="skill-tag">产品设计</span>
+    <span class="skill-tag">AI Agent</span>
+    <span class="skill-tag">用户体验</span>
+    <span class="skill-tag">MCP</span>
+    <span class="skill-tag">交互原型</span>
+    <span class="skill-tag">Figma</span>
+    <span class="skill-tag">Python (Flask/FastAPI)</span>
+    <span class="skill-tag">fail2ban + iptables</span>
+    <span class="skill-tag">Nginx / Supervisor</span>
+  </div>
+
+  <div class="share-bar">
+    <button class="share-btn primary" id="copyLink">🔗 复制公开链接</button>
+    <button class="share-btn" id="printPage">🖨 浏览器打印</button>
+    <a class="share-btn" href="/" target="_blank">⬅ ResumeCraft</a>
+  </div>
+
+  <div class="footer">由 ResumeCraft 生成 · 免登录公开个人主页</div>
+</div>
+
+<script>
+(function() {
+  // 后端注入的文档名（__PUBLIC_DOC__ 会被替换为文件名）
+  var docFile = "__PUBLIC_DOC__" || "";
+  var frame = document.getElementById("frame");
+
+  async function init() {
+    // 1. 渲染简历 iframe
+    if (docFile) {
+      try {
+        var res = await fetch("/api/public/data?doc=" + encodeURIComponent(docFile));
+        var data = await res.json();
+        if (data.html) {
+          var baseHref = window.location.origin;
+          frame.srcdoc = data.html.replace("<head>", "<head><base href=\"" + baseHref + "/\">");
+          frame.onload = function() {
+            try {
+              var body = frame.contentDocument.body;
+              frame.style.height = Math.max(body.scrollHeight, 1122) + "px";
+            } catch(e) {}
+          };
+        }
+      } catch(e) {}
+    }
+
+    // 2. 拉取多平台公开量化指标
+    try {
+      var mr = await fetch("/api/metrics");
+      var md = await mr.json();
+      var m = md.metrics || {};
+      var git = m.git || {};
+      var ds = m.deepseek || {};
+      var sec = m.security || {};
+      document.getElementById("gitStat").textContent = git.total_commits_str || git.total_commits || "—";
+      document.getElementById("tokenStat").textContent = ds.total_tokens_str || "—";
+      document.getElementById("blockStat").textContent = sec.blocked_ips_str || "—";
+    } catch(e) {}
+  }
+
+  // 复制公开链接
+  document.getElementById("copyLink").addEventListener("click", function() {
+    var link = window.location.origin + "/p/" + (docFile ? docFile.replace(/\.md$/,'') : "");
+    navigator.clipboard.writeText(link).then(function() {
+      var btn = document.getElementById("copyLink");
+      btn.textContent = "✅ 已复制链接";
+      setTimeout(function(){ btn.textContent = "🔗 复制公开链接"; }, 1800);
+    });
+  });
+
+  document.getElementById("printPage").addEventListener("click", function() {
+    try { frame.contentWindow.print(); } catch(e) {}
+  });
+
+  init();
+})();
+</script>
+</body>
+</html>

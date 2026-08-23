@@ -1,0 +1,28 @@
+{# 暗黑极客风 —— 深色底 + 荧光绿 + 等宽字体点缀 #}
+{% extends "base.html" %}
+{% block style %}
+:root{
+  --bg:#0e1116;--card:#151a22;--text:#e6edf3;--muted:#8b949e;
+  --line:#21262d;--accent:#3fb950;--tag:#1c2230;--proj-bg:#12161d;
+}
+.role{font-family:ui-monospace,"SF Mono",Menlo,monospace;color:#58a6ff;}
+.sec-title{letter-spacing:2px;color:#8b949e;}
+.sec-title::before{box-shadow:0 0 8px var(--accent);}
+.card{box-shadow:0 0 0 1px rgba(255,255,255,.05);}
+.hero .name{color:#f0f6fc;}
+.hero .contact b{color:#e6edf3;}
+.hero .pitch{color:#8b949e;}
+.job .j-head h3{color:#f0f6fc;}
+.job .j-sub{color:#58a6ff;}
+.job ul li{color:#8b949e;}
+.job ul li b{color:#e6edf3;}
+.proj h4{color:#f0f6fc;}
+.proj p{color:#8b949e;}
+.skills span{color:#8b949e;background:#1c2230;border-color:#30363d;}
+.skills span b{color:#e6edf3;}
+.edu h3{color:#f0f6fc;}
+.edu .school{color:#8b949e;}
+.md-link{color:var(--accent);border-bottom-color:var(--accent);}
+.github-brand-icon{color:#e6edf3;fill:#e6edf3;}
+.md-link:hover .github-brand-icon{color:#3fb950;fill:#3fb950;}
+{% endblock %}

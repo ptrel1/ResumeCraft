@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>简历展示</title>
+<link rel="icon" type="image/svg+xml" href="/static/logo.svg?v=0.1.4">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:-apple-system,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;
+    background:#0d1117;color:#e6edf3;min-height:100vh;-webkit-font-smoothing:antialiased;
+  }
+  /* 顶部浮动工具条 */
+  .topbar{
+    position:fixed;top:16px;right:20px;z-index:999;
+    display:flex;gap:8px;align-items:center;
+    background:rgba(22,27,34,0.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border:1px solid #30363d;border-radius:999px;padding:6px 8px;
+    box-shadow:0 4px 20px rgba(0,0,0,.35);
+  }
+  .topbar button{
+    background:transparent;border:none;color:#e6edf3;font-size:13px;cursor:pointer;
+    padding:5px 12px;border-radius:999px;transition:all .15s;font-family:inherit;
+  }
+  .topbar button:hover{background:#21262d;color:#3fb950;}
+  .topbar .primary{background:#3fb950;color:#0f1117;font-weight:700;}
+  .topbar .primary:hover{background:#46954a;color:#0f1117;}
+
+  /* 简历纸张容器 */
+  .paper-wrap{
+    padding:40px 16px 80px;display:flex;justify-content:center;
+  }
+  .paper{
+    width:100%;max-width:900px;background:#fff;border-radius:8px;overflow:hidden;
+    box-shadow:0 12px 48px rgba(0,0,0,.45);
+  }
+  .paper iframe{width:100%;min-height:297mm;border:none;display:block;}
+</style>
+</head>
+<body>
+
+<!-- 浮动工具条（全屏沉浸） -->
+<div class="topbar">
+  <button onclick="printPage()" class="primary">🖨 打印</button>
+  <button onclick="copyLink()">🔗 复制链接</button>
+</div>
+
+<!-- 简历 -->
+<div class="paper-wrap">
+  <div class="paper"><iframe id="frame" sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe></div>
+</div>
+
+<script>
+(function() {
+  // 后端注入的文档名（__PUBLIC_DOC__ 会被替换为文件名）
+  var docFile = "__PUBLIC_DOC__" || "";
+  var frame = document.getElementById("frame");
+
+  async function init() {
+    document.title = "简历展示";
+    if (docFile) {
+      try {
+        var res = await fetch("/api/public/data?doc=" + encodeURIComponent(docFile));
+        var data = await res.json();
+        if (data.html) {
+          var baseHref = window.location.origin;
+          frame.srcdoc = data.html.replace("<head>", "<head><base href=\"" + baseHref + "/\">");
+          frame.onload = function() {
+            try {
+              var win = frame.contentWindow, doc = frame.contentDocument, body = doc ? doc.body : null;
+              // 关键：清除简历模板里 `html,body{height:100%}` 的固定高度限制，
+              // 并禁用文档内部滚动，让简历内容自然撑开 iframe 高度 → 外层唯一滚动条
+              if (doc && doc.documentElement) {
+                doc.documentElement.style.height = "auto";
+                doc.documentElement.style.overflow = "hidden";
+                doc.documentElement.style.overflowX = "hidden";
+              }
+              if (win) {
+                try { win.document.body.style.height = "auto"; } catch(e) {}
+              }
+
+              // 判断是否窄屏手机：注入移动端媒体查询 → 简历流式排版，文字保持可读，不整体缩放
+              if (win && doc && frame.clientWidth < 700) {
+                injectMobileCss(doc);
+              }
+              // 高度自适应内容（流式排版后，内容不会超宽，无需缩放）
+              frame.style.height = Math.max(body ? body.scrollHeight : 0, 1122) + "px";
+            } catch(e) {}
+            // 文档标题
+            try {
+              var t = frame.contentDocument.title;
+              if (t) document.title = t;
+            } catch(e) {}
+          };
+        }
+      } catch(e) {}
+    }
+  }
+
+  // 向 iframe 内简历注入移动端媒体查询：窄屏时流式排版(不整体缩放)，文字保持可读
+  function injectMobileCss(doc) {
+    try {
+      if (!doc || !doc.head) return;
+      if (doc.getElementById('rc-mobile-css')) return;
+      var css = document.createElement ? doc.createElement('style') : null;
+      if (!css) return;
+      css.id = 'rc-mobile-css';
+      css.textContent = `
+        @media (max-width: 700px) {
+          html, body { height: auto !important; overflow-x: hidden !important; }
+          .page { width: 100% !important; min-height: auto !important; padding: 14px !important; }
+          .card { padding: 14px !important; border-radius: 12px !important; }
+          .hero { flex-direction: column !important; gap: 12px !important; align-items: center !important; }
+          .hero-avatar, .hero .avatar { order: -1 !important; align-self: center !important; width: 88px !important; height: 114px !important; border-radius: 12px !important; object-fit: cover !important; }
+          .hero-main { width: 100% !important; text-align: left !important; }
+          .job, .proj { padding: 0 !important; }
+          .md-table-wrap { overflow-x: auto !important; }
+          .git-chart-svg-wrap, .git-chart-card { overflow-x: auto !important; }
+          .md-img { max-width: 100% !important; }
+        }
+      `;
+      doc.head.appendChild(css);
+    } catch(e) {}
+  }
+
+
+  function printPage() {
+    try { if (frame.contentWindow) frame.contentWindow.print(); } catch(e) {}
+  }
+
+  function copyLink() {
+    var link = window.location.href;
+    navigator.clipboard.writeText(link).then(function() {
+      document.title = "✅ 链接已复制";
+      setTimeout(function(){ document.title = "简历展示"; }, 1600);
+    });
+  }
+
+  window.printPage = printPage;
+  window.copyLink = copyLink;
+
+  init();
+})();
+</script>
+</body>
+</html>

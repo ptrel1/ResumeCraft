@@ -1,0 +1,13 @@
+{# 渐变活力风 —— 顶部渐变 hero + 彩色标题 #}
+{% extends "base.html" %}
+{% block style %}
+:root{
+  --bg:#eef1ff;--card:#ffffff;--text:#16132b;--muted:#5b5b72;
+  --line:#e6e6f0;--accent:#5b5bd6;--tag:#f0f0ff;--proj-bg:#f4f4ff;
+}
+.hero.card{background:linear-gradient(135deg,#5b5bd6 0%,#7a5bf0 55%,#d65bd6 100%);color:#fff;}
+.hero .name,.hero .role,.hero .contact,.hero .contact b{color:#fff;}
+.hero .pitch{border-color:rgba(255,255,255,.3);color:#f3f0ff;}
+.sec-title::before{background:linear-gradient(90deg,#5b5bd6,#d65bd6);}
+.card{box-shadow:0 8px 24px rgba(91,91,214,.08);}
+{% endblock %}

@@ -1,0 +1,12 @@
+<!-- 硅基流动 SiliconFlow 渐变图标 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="16" height="16" fill="none">
+  <defs>
+    <linearGradient id="sf-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#58a6ff"/>
+      <stop offset="100%" stop-color="#1f6feb"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="40" height="40" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+  <path d="M12 24 C12 16 20 12 24 12 C32 12 36 20 36 24 C36 32 28 36 24 36 C16 36 12 28 12 24 Z" stroke="url(#sf-blue)" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="24" cy="24" r="3" fill="url(#sf-blue)"/>
+</svg>

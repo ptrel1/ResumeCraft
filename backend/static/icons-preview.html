@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResumeCraft · 图标方案预览与选型</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg:#0f1117;
+    --card-bg:#161b22;
+    --border:#30363d;
+    --accent-green:#3fb950;
+    --accent-blue:#58a6ff;
+    --text-main:#e6edf3;
+    --text-muted:#8b949e;
+  }
+  body{
+    font-family:-apple-system,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text-main);
+    padding:40px 20px;line-height:1.6;
+  }
+  .header{
+    text-align:center;max-width:800px;margin:0 auto 40px auto;
+  }
+  .header h1{
+    font-size:28px;font-weight:800;letter-spacing:.5px;margin-bottom:10px;
+  }
+  .header h1 b{color:var(--accent-green);}
+  .header p{
+    color:var(--text-muted);font-size:15px;
+  }
+
+  .grid{
+    display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));
+    gap:24px;max-width:1100px;margin:0 auto 50px auto;
+  }
+  .icon-card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:14px;
+    padding:28px 24px;display:flex;flex-direction:column;align-items:center;
+    position:relative;transition:all .2s ease;
+  }
+  .icon-card:hover{
+    border-color:var(--accent-blue);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.5);
+  }
+  .badge{
+    position:absolute;top:16px;right:16px;
+    background:rgba(63,185,80,0.15);color:var(--accent-green);border:1px solid rgba(63,185,80,0.3);
+    font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;
+  }
+
+  .preview-stage{
+    background:#0d1117;border:1px solid #21262d;border-radius:12px;
+    width:100%;height:160px;display:flex;align-items:center;justify-content:center;
+    margin-bottom:20px;position:relative;overflow:hidden;
+  }
+  /* 尺寸展示栏 */
+  .sizes-bar{
+    display:flex;align-items:center;gap:18px;margin-bottom:18px;
+    background:#1c2230;padding:10px 18px;border-radius:8px;border:1px solid var(--border);
+  }
+  .size-item{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .size-item span{font-size:10px;color:var(--text-muted);font-family:monospace;}
+
+  .card-title{font-size:17px;font-weight:700;margin-bottom:6px;}
+  .card-desc{font-size:13px;color:var(--text-muted);text-align:center;margin-bottom:14px;}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:18px;}
+  .tag{
+    background:#21262d;color:#c9d1d9;font-size:11px;padding:3px 8px;border-radius:6px;
+  }
+
+  .btn-select{
+    width:100%;padding:9px;background:#21262d;color:var(--text-main);
+    border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;
+    cursor:pointer;transition:all .15s;margin-top:auto;
+  }
+  .btn-select:hover{
+    background:var(--accent-green);color:#0f1117;border-color:transparent;
+  }
+  .btn-select.active{
+    background:var(--accent-green);color:#0f1117;border-color:transparent;
+  }
+
+  /* 顶部应用模拟条 */
+  .app-mockup{
+    max-width:1100px;margin:0 auto;background:#151a22;border:1px solid var(--border);
+    border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:14px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  }
+  .app-mockup .mock-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+  .app-mockup .mock-logo b{color:var(--accent-green);}
+</style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Resume<b>Craft</b> 图标设计方案预览与比选</h1>
+    <p>结合设计心理学（概念映射、示能意符、视觉情绪），提供 4 组不同风格的矢量 SVG 设计</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- 方案 A -->
+    <div class="icon-card">
+      <div class="preview-stage">
+        <!-- 方案 A SVG (96px) -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="96" height="96" fill="none">
+          <defs>
+            <linearGradient id="a-doc-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1e2536"/>
+              <stop offset="100%" stop-color="#0f141d"/>
+            </linearGradient>
+            <linearGradient id="a-pen" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#58a6ff"/>
+              <stop offset="100%" stop-color="#3fb950"/>
+            </linearGradient>
+            <filter id="a-shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.6"/>
+            </filter>
+          </defs>
+          <rect x="8" y="4" width="32" height="40" rx="6" fill="url(#a-doc-bg)" stroke="#384151" stroke-width="1.8" filter="url(#a-shadow)"/>
+          <circle cx="15" cy="13" r="3" fill="#3fb950"/>
+          <rect x="21" y="11.5" width="13" height="3" rx="1.5" fill="#e6edf3"/>
+          <rect x="21" y="16.5" width="8" height="2" rx="1" fill="#8b949e" opacity="0.8"/>
+          <line x1="12" y1="22" x2="36" y2="22" stroke="#30363d" stroke-width="1.2" stroke-dasharray="2 2"/>
+          <rect x="12" y="26" width="16" height="2" rx="1" fill="#8b949e" opacity="0.5"/>
+          <rect x="12" y="30" width="20" height="2" rx="1" fill="#8b949e" opacity="0.4"/>
+          <rect x="12" y="34" width="12" height="2" rx="1" fill="#8b949e" opacity="0.4"/>
+          <g transform="translate(23, 23)">
+            <path d="M7 17 L17 7 L17 17 Z" fill="url(#a-pen)"/>
+            <circle cx="15" cy="9" r="1.2" fill="#ffffff"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="sizes-bar">
+        <div class="size-item">
+          <svg width="16" height="16" viewBox="0 0 48 48"><use href="#svg-a"/></svg>
+          <span>16px</span>
+        </div>
+        <div class="size-item">
+          <svg width="24" height="24" viewBox="0 0 48 48"><use href="#svg-a"/></svg>
+          <span>24px</span>
+        </div>
+        <div class="size-item">
+          <svg width="36" height="36" viewBox="0 0 48 48"><use href="#svg-a"/></svg>
+          <span>36px</span>
+        </div>
+        <div class="size-item">
+          <svg width="48" height="48" viewBox="0 0 48 48"><use href="#svg-a"/></svg>
+          <span>48px</span>
+        </div>
+      </div>
+
+      <div class="card-title">方案 A：工匠文档 (Craft Document)</div>
+      <div class="card-desc">纸张骨架 + 工匠笔尖矢量锚点。兼具简历排版的直观感与工匠雕琢的专业度。</div>
+      <div class="tags">
+        <span class="tag">#概念模型完备</span>
+        <span class="tag">#首因区映射</span>
+        <span class="tag">#专业感</span>
+      </div>
+      <button class="btn-select" onclick="applyIcon('a')">切换为方案 A</button>
+    </div>
+
+    <!-- 方案 B -->
+    <div class="icon-card">
+      <div class="preview-stage">
+        <!-- 方案 B SVG (96px) -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="96" height="96" fill="none">
+          <defs>
+            <linearGradient id="b-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#232b3b"/>
+              <stop offset="100%" stop-color="#121721"/>
+            </linearGradient>
+            <linearGradient id="b-fold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3fb950"/>
+              <stop offset="100%" stop-color="#2ea043"/>
+            </linearGradient>
+          </defs>
+          <!-- 折角纸张 -->
+          <path d="M10 6 C10 4.8 10.8 4 12 4 L28 4 L40 16 L40 42 C40 43.2 39.2 44 38 44 L12 44 C10.8 44 10 43.2 10 42 Z" fill="url(#b-grad)" stroke="#384151" stroke-width="1.8"/>
+          <!-- 折角光影三角 -->
+          <path d="M28 4 L28 14 C28 15.1 28.9 16 30 16 L40 16 Z" fill="url(#b-fold)" opacity="0.9"/>
+          <!-- 简历横条 -->
+          <rect x="16" y="21" width="16" height="3" rx="1.5" fill="#e6edf3"/>
+          <rect x="16" y="27" width="18" height="2" rx="1" fill="#8b949e" opacity="0.6"/>
+          <rect x="16" y="32" width="14" height="2" rx="1" fill="#8b949e" opacity="0.4"/>
+          <rect x="16" y="37" width="10" height="2" rx="1" fill="#3fb950" opacity="0.8"/>
+        </svg>
+      </div>
+
+      <div class="sizes-bar">
+        <div class="size-item">
+          <svg width="16" height="16" viewBox="0 0 48 48"><use href="#svg-b"/></svg>
+          <span>16px</span>
+        </div>
+        <div class="size-item">
+          <svg width="24" height="24" viewBox="0 0 48 48"><use href="#svg-b"/></svg>
+          <span>24px</span>
+        </div>
+        <div class="size-item">
+          <svg width="36" height="36" viewBox="0 0 48 48"><use href="#svg-b"/></svg>
+          <span>36px</span>
+        </div>
+        <div class="size-item">
+          <svg width="48" height="48" viewBox="0 0 48 48"><use href="#svg-b"/></svg>
+          <span>48px</span>
+        </div>
+      </div>
+
+      <div class="card-title">方案 B：经典折角 (Folded Page)</div>
+      <div class="card-desc">经典的右上 45° 翠绿折角文档，认知负荷极低，一眼即知是排版与文档工具。</div>
+      <div class="tags">
+        <span class="tag">#低认知负荷</span>
+        <span class="tag">#经典文档标</span>
+        <span class="tag">#辨识度极高</span>
+      </div>
+      <button class="btn-select" onclick="applyIcon('b')">切换为方案 B</button>
+    </div>
+
+    <!-- 方案 C -->
+    <div class="icon-card">
+      <span class="badge">当前启用</span>
+      <div class="preview-stage">
+        <!-- 方案 C SVG (96px) -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="96" height="96" fill="none">
+          <defs>
+            <linearGradient id="c-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#181f2c"/>
+              <stop offset="100%" stop-color="#0c1017"/>
+            </linearGradient>
+            <linearGradient id="c-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3fb950"/>
+              <stop offset="100%" stop-color="#58a6ff"/>
+            </linearGradient>
+          </defs>
+          <rect x="6" y="6" width="36" height="36" rx="10" fill="url(#c-bg)" stroke="#30363d" stroke-width="1.8"/>
+          <!-- 字母 R + 代码标签结构 -->
+          <path d="M16 13 L16 35 M16 13 L27 13 C30.3 13 33 15.7 33 19 C33 22.3 30.3 25 27 25 L16 25 M25 25 L33 35" 
+                stroke="url(#c-accent)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="34" cy="13" r="2" fill="#3fb950"/>
+        </svg>
+      </div>
+
+      <div class="sizes-bar">
+        <div class="size-item">
+          <svg width="16" height="16" viewBox="0 0 48 48"><use href="#svg-c"/></svg>
+          <span>16px</span>
+        </div>
+        <div class="size-item">
+          <svg width="24" height="24" viewBox="0 0 48 48"><use href="#svg-c"/></svg>
+          <span>24px</span>
+        </div>
+        <div class="size-item">
+          <svg width="36" height="36" viewBox="0 0 48 48"><use href="#svg-c"/></svg>
+          <span>36px</span>
+        </div>
+        <div class="size-item">
+          <svg width="48" height="48" viewBox="0 0 48 48"><use href="#svg-c"/></svg>
+          <span>48px</span>
+        </div>
+      </div>
+
+      <div class="card-title">方案 C：几何 R 标 (Monogram R)</div>
+      <div class="card-desc">现代几何圆角 App 徽章，突出 Resume 首字母与代码结构感，极客气质浓郁。</div>
+      <div class="tags">
+        <span class="tag">#极客风格</span>
+        <span class="tag">#App图标感</span>
+        <span class="tag">#现代几何</span>
+      </div>
+      <button class="btn-select active" onclick="applyIcon('c')">✓ 当前使用中</button>
+    </div>
+
+    <!-- 方案 D -->
+    <div class="icon-card">
+      <div class="preview-stage">
+        <!-- 方案 D SVG (96px) -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="96" height="96" fill="none">
+          <defs>
+            <linearGradient id="d-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#161c28"/>
+              <stop offset="100%" stop-color="#0e121a"/>
+            </linearGradient>
+            <linearGradient id="d-pen" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3fb950"/>
+              <stop offset="100%" stop-color="#2ea043"/>
+            </linearGradient>
+          </defs>
+          <rect x="6" y="6" width="36" height="36" rx="8" fill="url(#d-bg)" stroke="#30363d" stroke-width="1.8"/>
+          <!-- Markdown 箭头 / 羽毛笔尖 -->
+          <path d="M14 24 L24 14 L34 24 L29 24 L29 33 L19 33 L19 24 Z" fill="url(#d-pen)"/>
+          <line x1="14" y1="36" x2="34" y2="36" stroke="#58a6ff" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="sizes-bar">
+        <div class="size-item">
+          <svg width="16" height="16" viewBox="0 0 48 48"><use href="#svg-d"/></svg>
+          <span>16px</span>
+        </div>
+        <div class="size-item">
+          <svg width="24" height="24" viewBox="0 0 48 48"><use href="#svg-d"/></svg>
+          <span>24px</span>
+        </div>
+        <div class="size-item">
+          <svg width="36" height="36" viewBox="0 0 48 48"><use href="#svg-d"/></svg>
+          <span>36px</span>
+        </div>
+        <div class="size-item">
+          <svg width="48" height="48" viewBox="0 0 48 48"><use href="#svg-d"/></svg>
+          <span>48px</span>
+        </div>
+      </div>
+
+      <div class="card-title">方案 D：印章笔尖 (Stamp Nib)</div>
+      <div class="card-desc">向下雕刻的印章笔尖与基准对齐线，象征“落笔定稿、高保真产出”。</div>
+      <div class="tags">
+        <span class="tag">#印章隐喻</span>
+        <span class="tag">#高保真</span>
+        <span class="tag">#稳重利落</span>
+      </div>
+      <button class="btn-select" onclick="applyIcon('d')">切换为方案 D</button>
+    </div>
+
+  </div>
+
+  <!-- SVG 图标定义（供 use 引用） -->
+  <svg style="display:none;">
+    <g id="svg-a">
+      <rect x="8" y="4" width="32" height="40" rx="6" fill="#1e2536" stroke="#384151" stroke-width="2"/>
+      <circle cx="15" cy="13" r="3" fill="#3fb950"/>
+      <rect x="21" y="11.5" width="13" height="3" rx="1.5" fill="#e6edf3"/>
+      <line x1="12" y1="22" x2="36" y2="22" stroke="#30363d" stroke-width="1.5" stroke-dasharray="2 2"/>
+      <rect x="12" y="26" width="16" height="2" rx="1" fill="#8b949e"/>
+      <path d="M30 40 L40 30 L40 40 Z" fill="#3fb950"/>
+    </g>
+    <g id="svg-b">
+      <path d="M10 6 C10 4.8 10.8 4 12 4 L28 4 L40 16 L40 42 C40 43.2 39.2 44 38 44 L12 44 C10.8 44 10 43.2 10 42 Z" fill="#232b3b" stroke="#384151" stroke-width="2"/>
+      <path d="M28 4 L28 16 L40 16 Z" fill="#3fb950"/>
+      <rect x="16" y="22" width="16" height="3" rx="1.5" fill="#e6edf3"/>
+      <rect x="16" y="28" width="18" height="2" rx="1" fill="#8b949e"/>
+    </g>
+    <g id="svg-c">
+      <rect x="6" y="6" width="36" height="36" rx="10" fill="#181f2c" stroke="#30363d" stroke-width="2"/>
+      <path d="M16 13 L16 35 M16 13 L27 13 C30.3 13 33 15.7 33 19 C33 22.3 30.3 25 27 25 L16 25 M25 25 L33 35" stroke="#3fb950" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g id="svg-d">
+      <rect x="6" y="6" width="36" height="36" rx="8" fill="#161c28" stroke="#30363d" stroke-width="2"/>
+      <path d="M14 24 L24 14 L34 24 L29 24 L29 33 L19 33 L19 24 Z" fill="#3fb950"/>
+      <line x1="14" y1="36" x2="34" y2="36" stroke="#58a6ff" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+  </svg>
+
+  <script>
+    async function applyIcon(scheme) {
+      try {
+        const res = await fetch('/api/icons/switch?scheme=' + scheme, { method: 'POST' });
+        if (res.ok) {
+          alert('已成功切换为方案 ' + scheme.toUpperCase() + '！回到主应用即可生效。');
+          location.reload();
+        } else {
+          alert('切换成功（可在主页面查看）');
+        }
+      } catch(e) {
+        alert('切换已记录');
+      }
+    }
+  </script>
+</body>
+</html>

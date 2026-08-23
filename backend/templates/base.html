@@ -1,0 +1,464 @@
+{# ============================================================================
+   ResumeCraft 简历基础模板
+   - 定义统一的简历结构渲染逻辑（个人信息 / 工作经历 / 项目 / 技能 / 教育）
+   - 具体风格模板继承本文件，仅覆盖 <style> 中的 CSS 变量与主题规则
+   - 数据来源：{{ resume }}（Resume 模型）、{{ theme_css }}（front matter 覆盖）
+   ============================================================================ #}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>{{ resume.contact.name or '简历' }}</title>
+<style>
+  {# 风格变量，由子模板的 {% block style %} 覆盖 #}
+  {% block style %}:root{
+    --bg:#f4f5f7;--card:#ffffff;--text:#1a1d21;--muted:#6b7280;
+    --line:#eceef1;--accent:#111827;--tag:#f3f4f6;--proj-bg:#f7f8fa;
+  }{% endblock %}
+  {# 通用结构样式 #}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+    line-height:1.6;color:var(--text);-webkit-font-smoothing:antialiased;
+  }
+  html, body{
+    height: 100%;
+    background: var(--bg);
+  }
+  .page{
+    width:210mm;min-height:100%;background:var(--bg);
+    display:flex;flex-direction:column;gap:14px;padding:10mm;
+  }
+  .card{
+    background:var(--card);border-radius:14px;padding:24px 28px;
+    box-shadow:0 1px 2px rgba(16,24,40,.04);
+    page-break-inside:avoid;break-inside:avoid;
+    transition:box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    border:1px solid transparent;
+  }
+  /* 编辑跟随联动高亮态 (Sync Highlight) */
+  .card.active-focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 2px var(--accent), 0 8px 32px rgba(0,0,0,0.3) !important;
+  }
+
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+    body {
+      background: transparent;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 8mm;
+      background: var(--bg);
+      gap: 10px !important;
+    }
+    /* 打印时适当收紧，让内容更紧凑地填满（减少尾部孤行/空页） */
+    .card {
+      box-shadow: none;
+      padding: 16px 18px !important;
+      /* 整张 section 卡允许跨页（fill A4），由小元素规则控制关键块完整 */
+      break-inside: auto;
+      page-break-inside: auto;
+    }
+    .job, .proj { margin-bottom: 10px !important; }
+    /* 允许切分的内容：工作经历/项目/教育/技能条目可跨页（fill 排版），
+       但标题防悬空（标题后不立即断页，跟随首条内容） */
+    .job, .proj, .edu, .skills {
+      break-inside: auto;
+      page-break-inside: auto;
+    }
+    /* 条目标题 + 首条内容绑定：标题不悬在页底 */
+    .job .j-head, .job .j-sub, .proj h4, .proj .p-desc, .edu h3, .edu .school {
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+    /* 表格允许按行切分填满 A4，表头跨页重复，单行不切断 */
+    .md-table-wrap { break-inside: auto; page-break-inside: auto; }
+    .md-table thead { display: table-header-group; }
+    .md-table tr { break-inside: avoid; page-break-inside: avoid; }
+    /* 保留完整（不能切）：首因区、热力图、表注 */
+    .hero, .git-chart-card, .table-note {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
+
+  {# ---------- 链接与图片渲染规范 ---------- #}
+  .md-link{
+    color:var(--accent);text-decoration:none;font-weight:600;
+    border-bottom:1px dashed var(--accent);padding-bottom:1px;transition:all .15s;
+    display:inline-flex;align-items:center;gap:4px;
+  }
+  .md-link:hover{filter:brightness(1.2);border-bottom-style:solid;}
+  .inline-brand-icon{
+    width:14px;height:14px;vertical-align:-2px;display:inline-block;margin-right:2px;flex-shrink:0;
+  }
+  .github-brand-icon{
+    color:var(--text);fill:currentColor;transition:color 0.15s ease;
+  }
+  .md-link:hover .github-brand-icon{
+    color:var(--accent);
+  }
+  /* 表格内 GitHub 开源链接悬浮气泡 (body 级, 复用 GitHub 官方风格) */
+  .link-pop-tooltip{
+    position:fixed;pointer-events:none !important;z-index:1000000;
+    background:#0d1117 !important;
+    color:#f0f6fc !important;border:1px solid #484f58 !important;border-radius:6px;
+    padding:7px 12px;font-size:12px;font-weight:600;font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    box-shadow:0 8px 24px rgba(0,0,0,0.8);max-width:320px;white-space:normal;line-height:1.45;
+    display:none;text-align:left;
+  }
+  .link-pop-tooltip.show{display:block !important;}
+  .link-pop-tooltip .lp-title{color:#fff;font-weight:700;margin-bottom:2px;}
+  .link-pop-tooltip .lp-sub{color:#9198a1;font-weight:400;font-size:11px;}
+  .md-img{
+    max-width:100%;height:auto;border-radius:8px;display:block;margin:12px 0;
+    filter:drop-shadow(0 2px 8px rgba(0,0,0,0.06));
+  }
+  /* GitHub 风格交互式热力图外层卡片 */
+  .git-chart-card{
+    background:var(--proj-bg);border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;margin:12px 0;position:relative;
+  }
+  .git-chart-head{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;
+    font-size:12px;font-weight:700;color:var(--text);
+  }
+  .git-chart-head .summary-title{display:flex;align-items:center;gap:6px;}
+  .git-chart-head .status-pill{
+    font-size:11px;font-family:ui-monospace,monospace;color:var(--muted);font-weight:500;
+  }
+  .git-chart-svg-wrap{
+    width:100%;overflow-x:auto;position:relative;
+  }
+  .git-chart-svg-wrap svg{
+    display:block;width:100%;height:auto;
+  }
+
+  /* GitHub 官方同款 HTML 浮动气泡 (独立 z-index) */
+  .git-pop-tooltip{
+    position:absolute;pointer-events:none !important;z-index:999999;
+    background:#0d1117 !important;
+    color:#f0f6fc !important;border:1px solid #484f58 !important;border-radius:6px;
+    padding:6px 12px;font-size:11.5px;font-weight:600;font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    box-shadow:0 8px 24px rgba(0,0,0,0.8);white-space:nowrap;
+    display:none;transform:translate(-50%, -100%) translateY(-8px);
+  }
+  .git-pop-tooltip.show{
+    display:block !important;
+  }
+  code{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:0.9em;background:var(--tag);padding:2px 6px;border-radius:4px;border:1px solid var(--line);
+  }
+
+  {# ---------- 首因区（心理学左右平衡栅格） ---------- #}
+  .hero{
+    display:flex;justify-content:space-between;align-items:flex-start;gap:24px;
+  }
+  .hero-main{flex:1;}
+  .hero-avatar{
+    width:90px;height:115px;flex-shrink:0;border-radius:8px;
+    object-fit:cover;border:1px solid var(--line);
+    box-shadow:0 4px 12px rgba(0,0,0,0.06);background:var(--tag);
+  }
+  .hero .name{font-size:28px;font-weight:800;letter-spacing:.5px;color:var(--text);}
+  .hero .role{font-size:15px;color:var(--muted);margin-top:6px;font-weight:600;}
+  .hero .pitch{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted);line-height:1.65;}
+  .hero .contact{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:12.5px;color:var(--muted);}
+  .hero .contact span{display:inline-flex;gap:6px;}
+  .hero .contact b{color:var(--text);font-weight:600;}
+
+  {# ---------- 区块标题 ---------- #}
+  .sec-title{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:18px;}
+  .sec-title::before{content:"";width:18px;height:2px;background:var(--accent);}
+  .sec-title::after{content:"";flex:1;height:1px;background:var(--line);}
+
+  {# ---------- Markdown 表格 ---------- #}
+  .md-table-wrap{margin:10px 0 18px;overflow-x:auto;}
+  .md-table{width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.5;}
+  .md-table th{
+    background:var(--tag);color:var(--text);font-weight:700;text-align:left;
+    padding:9px 12px;border-bottom:2px solid var(--accent);
+  }
+  .md-table td{padding:8px 12px;border-bottom:1px solid var(--line);color:var(--muted);}
+  .md-table td b, .md-table td code{color:var(--text);}
+  .md-table tbody tr:hover{background:var(--tag);}
+  /* 三列表格列宽均衡：性质/定位列不折行，项目列适度，亮点列最宽 */
+  .md-table th:nth-child(1), .md-table td:nth-child(1){min-width:150px;}
+  .md-table th:nth-child(2), .md-table td:nth-child(2){min-width:110px;white-space:nowrap;}
+  .md-table th:nth-child(3), .md-table td:nth-child(3){min-width:260px;}
+  /* 表格下的注释说明 (上表均为...等) */
+  .table-note{
+    margin:2px 0 18px;padding:8px 12px;font-size:12px;line-height:1.6;color:var(--muted);
+    background:var(--tag);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;
+  }
+  .table-note b{color:var(--text);}
+
+  {# ---------- 工作经历 ---------- #}
+  .job{margin-bottom:20px;}
+  /* 单行总结型 section（教育背景/性格标签）的段落：不带列表圆点 */
+  .plain-line{margin:2px 0 6px;font-size:13px;color:var(--text);line-height:1.7;}
+  .job:last-child{margin-bottom:0;}
+  .job .j-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px;margin-bottom:4px;}
+  .job .j-head h3{font-size:15.5px;font-weight:700;}
+  .job .j-head .date{font-size:12px;color:var(--muted);white-space:nowrap;}
+  .job .j-sub{font-size:13px;color:var(--muted);margin-bottom:10px;}
+  .job ul{list-style:none;}
+  .job ul li{font-size:13.5px;margin-bottom:8px;padding-left:16px;position:relative;color:var(--muted);}
+  .job ul li::before{content:"";position:absolute;left:1px;top:8px;width:5px;height:5px;border-radius:50%;background:var(--accent);}
+  .job ul li b{color:var(--text);}
+
+  {# ---------- 项目网格 ---------- #}
+  .proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .proj{background:var(--proj-bg);border-radius:10px;padding:16px 18px;border:1px solid var(--line);}
+  .proj h4{font-size:14px;font-weight:700;margin-bottom:6px;}
+  .proj .tag{font-size:10.5px;color:var(--muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+  .proj p{font-size:12.5px;color:var(--muted);}
+
+  {# ---------- 技能标签 ---------- #}
+  .skills{display:flex;flex-wrap:wrap;gap:8px;}
+  .skills span{font-size:12.5px;padding:5px 12px;border-radius:8px;background:var(--tag);color:var(--muted);border:1px solid var(--line);line-height:1.6;}
+  .skills span b{color:var(--text);margin-right:6px;}
+
+  {# ---------- 教育 ---------- #}
+  .edu{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px;}
+  .edu h3{font-size:14.5px;font-weight:700;}
+  .edu .school{font-size:13px;color:var(--muted);margin-top:2px;}
+  .edu .date{font-size:12px;color:var(--muted);white-space:nowrap;}
+</style>
+{# front matter theme 覆盖 CSS 变量（渲染在基础样式之后，可覆盖） #}
+<style>{{ theme_css }}</style>
+</head>
+<body>
+<div class="page">
+
+  {# ---------- 首因区 ---------- #}
+  <section class="card hero" id="sec-hero" data-sec="hero">
+    <div class="hero-main">
+      <div class="name">{{ resume.contact.name or '' }}</div>
+      {% if resume.contact.role %}<div class="role">{{ resume.contact.role | md_inline }}</div>{% endif %}
+      {% if resume.contact.summary %}<p class="pitch">{{ resume.contact.summary | md_inline }}</p>{% endif %}
+      {% if resume.contact.fields %}
+      <div class="contact">
+        {% for f in resume.contact.fields %}
+        <span><b>{{ f.label }}</b> {{ f.value | md_inline }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% if meta.avatar %}
+    <img class="hero-avatar" src="{{ meta.avatar }}" alt="{{ resume.contact.name or 'Avatar' }}" />
+    {% endif %}
+  </section>
+
+  {# ---------- 各区块 ---------- #}
+  {% for section in resume.sections %}
+  <section class="card" id="sec-{{ loop.index }}" data-sec="{{ section.name }}">
+    <div class="sec-title">{{ section.name }}</div>
+
+    {# Markdown 表格块 #}
+    {% if section.tables %}
+      {% for table in section.tables %}
+      <div class="md-table-wrap">
+        <table class="md-table">
+          {% for row in table %}
+            {% if loop.first %}
+            <thead><tr>{% for cell in row %}<th>{{ cell | md_inline }}</th>{% endfor %}</tr></thead>
+            {% else %}
+            <tr>{% for cell in row %}<td>{{ cell | md_inline }}</td>{% endfor %}</tr>
+            {% endif %}
+          {% endfor %}
+        </table>
+      </div>
+      {% endfor %}
+    {% endif %}
+
+    {# 表格注释 (以 > 引用的"上表均为..."说明, 渲染为表格下的表注) #}
+    {% set note_items = section.items | selectattr('title', 'equalto', '') | selectattr('points', 'defined') | list %}
+    {% for item in note_items %}
+      {% for p in item.points if p and p.strip().startswith('>') %}
+      <div class="table-note">{{ p | trim | replace('>', '', 1) | trim | md_inline }}</div>
+      {% endfor %}
+    {% endfor %}
+
+    {# 技能区块：标签流 #}
+    {% if section.skills %}
+      <div class="skills">
+        {% for s in section.skills %}
+          {% if '：' in s %}
+            <span><b>{{ s.split('：',1)[0] | md_inline }}</b>{{ s.split('：',1)[1] | md_inline }}</span>
+          {% else %}
+            <span>{{ s | md_inline }}</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {# 工作经历 / 教育 / 其他：列表条目 (过滤掉已单独渲染为表注的引用说明项) #}
+    {% if section.items and section.name not in ('项目经验','项目') and not section.skills %}
+      {% for item in section.items %}
+      <div class="job">
+        {% if item.title %}
+        <div class="j-head"><h3>{{ item.title | md_inline }}</h3>{% if item.date %}<span class="date">{{ item.date }}</span>{% endif %}</div>
+        {% endif %}
+        {% if item.subtitle %}<div class="j-sub">{{ item.subtitle | md_inline }}</div>{% endif %}
+        {% if item.points %}
+        {% if section.name in ('教育背景','性格标签') %}
+        {% for p in item.points if not p.strip().startswith('>') %}<p class="plain-line">{{ p | md_inline }}</p>{% endfor %}
+        {% else %}
+        <ul>{% for p in item.points if not p.strip().startswith('>') %}{% if '/api/git/chart.svg' in p or p.strip().startswith('![') %}</ul><div class="point-block">{{ p | md_inline }}</div><ul>{% else %}<li>{{ p | md_inline }}</li>{% endif %}{% endfor %}</ul>
+        {% endif %}
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% elif section.items and not section.skills %}
+      {# 项目经验：网格卡片 #}
+      <div class="proj-grid">
+        {% for item in section.items %}
+        <div class="proj">
+          <h4>{{ item.title | md_inline }}{% if item.tags %} <span class="tag">{{ item.tags|join(' / ') }}</span>{% endif %}</h4>
+          {% if item.points %}<p>{{ item.points|map('md_inline')|join(' ') }}</p>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+  {% endfor %}
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  initGitCharts();
+});
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  initGitCharts();
+}
+
+function initGitCharts() {
+  document.querySelectorAll('.git-chart-card').forEach(card => {
+    const tooltip = card.querySelector('.git-pop-tooltip');
+    const statusPill = card.querySelector('.status-pill');
+    const cells = card.querySelectorAll('.cal-cell');
+    if (!tooltip || !cells.length) return;
+
+    cells.forEach(cell => {
+      cell.addEventListener('mouseenter', function(e) {
+        const date = this.getAttribute('data-date') || '';
+        const count = parseInt(this.getAttribute('data-count') || '0', 10);
+        const gh = parseInt(this.getAttribute('data-github') || '0', 10);
+        const gt = parseInt(this.getAttribute('data-gitea') || '0', 10);
+        const desc = this.getAttribute('data-desc') || '';
+
+        // 构造细分描述：支持区分 GitHub 与 Gitea 私有仓库
+        let breakdown = [];
+        if (gh > 0) breakdown.push(`GitHub: ${gh}`);
+        if (gt > 0) breakdown.push(`Gitea: ${gt}`);
+        const sourceText = breakdown.length ? ` [${breakdown.join(' · ')}]` : '';
+
+        const tipText = `${date}: 共 ${count} 次提交${sourceText}`;
+        tooltip.textContent = tipText;
+        if (statusPill) statusPill.textContent = tipText;
+
+        const cardRect = card.getBoundingClientRect();
+        const cellRect = this.getBoundingClientRect();
+
+        const x = cellRect.left - cardRect.left + cellRect.width / 2;
+        const y = cellRect.top - cardRect.top;
+
+        tooltip.style.left = x + 'px';
+        tooltip.style.top = y + 'px';
+        tooltip.classList.add('show');
+      });
+
+      cell.addEventListener('mouseleave', function() {
+        tooltip.classList.remove('show');
+        // 动态恢复：从本 card 的 SVG 读取真实提交总数，不再写死静态数字
+        const svgEl = card.querySelector('.git-cal-svg');
+        const total = svgEl ? (parseInt(svgEl.getAttribute('data-total') || '0', 10) || 0) : 0;
+        if (statusPill) statusPill.textContent = '累计 ' + total.toLocaleString() + ' 次自研提交 (GitHub + Gitea)';
+      });
+    });
+  });
+}
+
+/* ============ 表格内开源链接悬浮气泡 (委托式, 零依赖) ============ */
+document.addEventListener('DOMContentLoaded', function() {
+  initLinkTooltips();
+});
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  initLinkTooltips();
+}
+
+function initLinkTooltips() {
+  // body 级共享气泡
+  let tip = document.querySelector('.link-pop-tooltip');
+  if (!tip) {
+    tip = document.createElement('div');
+    tip.className = 'link-pop-tooltip';
+    document.body.appendChild(tip);
+  }
+
+  // 识别: 表格内指向 GitHub 的 md-link
+  const anchors = document.querySelectorAll('table.md-link-table a.md-link, table.md-table a.md-link');
+  anchors.forEach(a => {
+    const href = a.getAttribute('href') || '';
+    if (!/github\.com/.test(href)) return;
+
+    // 已绑定的跳过 (MouseEnter 事件标记)
+    if (a.dataset.lpBound) return;
+    a.dataset.lpBound = '1';
+
+    let hideTimer = null;
+    const showTip = (e) => {
+      if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+      const repo = (href.replace(/[#?].*$/, '').replace(/\/+$/, '').split('/').pop()) || '';
+      tip.innerHTML = '<div class="lp-title">GitHub 开源仓库</div>' +
+        '<div class="lp-sub">' + (a.textContent ? a.textContent.trim() : repo) +
+        ' · 点击直达 <span style="color:#58a6ff">github.com</span></div>';
+      tip.classList.add('show');
+      positionTip(tip, a);
+    };
+    const hideTip = () => {
+      if (hideTimer) return;
+      hideTimer = setTimeout(() => tip.classList.remove('show'), 80);
+    };
+
+    a.addEventListener('mouseenter', showTip);
+    a.addEventListener('mouseleave', hideTip);
+    a.addEventListener('focus', showTip);
+    a.addEventListener('blur', hideTip);
+    tip.addEventListener('mouseenter', () => { if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; } });
+  });
+
+  // 跟随鼠标移动微调位置 (气泡可能因换行偏移)
+  const moveTip = (e) => {
+    if (tip.classList.contains('show')) {
+      positionTip(tip, e.target);
+    }
+  };
+  document.addEventListener('mousemove', moveTip, { passive: true });
+}
+
+function positionTip(tip, anchor) {
+  const rect = anchor.getBoundingClientRect();
+  const tw = tip.offsetWidth || 240;
+  const th = tip.offsetHeight || 44;
+  let x = rect.left + rect.width / 2 - tw / 2;
+  let y = rect.top - th - 8;
+  x = Math.max(8, Math.min(x, window.innerWidth - tw - 8));
+  if (y < 8) y = rect.bottom + 8; // 上方放不下时显示在下方
+  tip.style.left = x + 'px';
+  tip.style.top = y + 'px';
+}
+</script>
+</body>
+</html>

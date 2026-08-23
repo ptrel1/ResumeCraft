@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+  <defs>
+    <!-- 方案 C：深色现代极客底色 -->
+    <linearGradient id="rc-c-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18202d"/>
+      <stop offset="100%" stop-color="#0c1017"/>
+    </linearGradient>
+    <!-- 极光蓝绿渐变 -->
+    <linearGradient id="rc-c-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3fb950"/>
+      <stop offset="100%" stop-color="#58a6ff"/>
+    </linearGradient>
+    <filter id="rc-c-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- 圆角外框卡片 -->
+  <rect x="5" y="5" width="38" height="38" rx="10" fill="url(#rc-c-bg)" stroke="#30363d" stroke-width="1.8" filter="url(#rc-c-shadow)"/>
+  
+  <!-- 字母 R + 代码架构线条 -->
+  <path d="M16 13 L16 35 M16 13 L27 13 C30.3 13 33 15.7 33 19 C33 22.3 30.3 25 27 25 L16 25 M25 25 L33 35" 
+        stroke="url(#rc-c-accent)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- 极客点缀徽标（右上角代码光标点） -->
+  <circle cx="34" cy="13" r="2.2" fill="#3fb950"/>
+</svg>

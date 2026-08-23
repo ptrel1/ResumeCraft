@@ -1,0 +1,48 @@
+# ResumeCraft 多平台数据源连接器配置模板
+# 复制为 connectors.toml 并按需填写真实密钥（密钥禁止提交 git）。
+
+# DeepSeek 官方账单 / Token 用量
+[deepseek]
+enabled = true
+api_key = "YOUR_DS_API_KEY"          # ⚠️ 填入真实 DeepSeek API Key
+user_token = "YOUR_DS_USER_TOKEN"    # ⚠️ 或控制台 User Token（拉取账单）
+
+# 硅基流动（SiliconFlow）Token 明细
+[siliconflow]
+enabled = true
+api_key = "YOUR_SF_API_KEY"          # ⚠️ 填入真实 SiliconFlow API Key
+# 可选：填入控制台请求头 cookie / authorization 实现实时账单轮询
+cookie = ""
+authorization = ""
+
+# 本地 Git 仓库提交统计（用于贡献热力图）
+[git]
+enabled = true
+github_base = "/path/to/your/github/repos"   # 本地 GitHub 仓库根目录
+github_user = "your-github-username"
+gitea_user = "your-gitea-username"
+# git 贡献热力图额外配置
+gitea_base = "/path/to/gitea-repositories/your-user"   # Gitea 服务端私有仓库目录（可选）
+gitea_host = "your-gitea.example.invalid"              # 用于识别 Gitea 远端的域名（可选）
+# 归属邮箱白名单：只统计这些邮箱作者的提交，过滤他人/框架提交（防止热力图被刷量）
+your_emails = [
+    "your@example.com",
+    "your@users.noreply.github.com",
+]
+
+# GitHub 公开统计（仓库数 / star，走 GitHub 公开 API）
+[github]
+enabled = true
+username = "your-github-username"
+# 需要实时统计 star 的核心开源仓库白名单
+core_repos = ["repo1", "repo2"]
+
+# 服务器安全拦截统计（本机 server-defender 服务）
+[security]
+enabled = true
+api_base = "http://127.0.0.1:8899"
+
+# 工业调度系统动态指标（可选数据源）
+[cem]
+enabled = false
+db_name = "your_cem_db"
